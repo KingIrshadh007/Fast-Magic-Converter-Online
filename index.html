@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -25,28 +24,42 @@ body{
     padding:20px;
 }
 
+/* FIXED CONTAINER */
 .container{
     width:100%;
-    max-width:750px;
+    max-width:900px;
     background:#fff;
-    border-radius:16px;
-    padding:30px;
+    border-radius:20px;
+    padding:40px;
     box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
+/* TITLE FIX */
 h1{
     text-align:center;
     color:#111827;
-    margin-bottom:20px;
+    margin-bottom:30px;
+    font-size:40px;
 }
 
+/* FIXED DROPZONE */
 .dropzone{
+    width:100%;
+    min-height:180px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
     border:2px dashed #2563eb;
     border-radius:12px;
-    padding:35px;
+
+    background:#eff6ff;
+
     text-align:center;
     cursor:pointer;
-    background:#eff6ff;
+
     transition:.3s;
 }
 
@@ -60,32 +73,35 @@ h1{
 
 .dropzone h3{
     color:#1d4ed8;
-    margin-bottom:8px;
+    margin-bottom:10px;
+    font-size:28px;
 }
 
 .dropzone p{
     color:#6b7280;
+    font-size:16px;
 }
 
+/* NOTE BOX */
 .note{
-    margin-top:15px;
+    margin-top:20px;
     padding:12px;
     background:#fff7ed;
     border:1px solid #fdba74;
     border-radius:8px;
     color:#9a3412;
     font-size:14px;
-    line-height:1.5;
 }
 
+/* FILE LIST */
 #fileCount{
-    margin-top:15px;
+    margin-top:20px;
     font-weight:bold;
-    color:#374151;
+    text-align:center;
 }
 
 #fileList{
-    margin-top:12px;
+    margin-top:15px;
     display:flex;
     flex-direction:column;
     gap:10px;
@@ -105,57 +121,51 @@ h1{
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
-    max-width:85%;
-    color:#111827;
+    max-width:80%;
 }
 
 .remove-btn{
-    width:34px;
-    height:34px;
+    width:32px;
+    height:32px;
     border:none;
     border-radius:50%;
     background:#ef4444;
-    color:#fff;
+    color:white;
     cursor:pointer;
-    font-size:16px;
-    font-weight:bold;
 }
 
-.remove-btn:hover{
-    background:#dc2626;
-}
-
+/* OPTIONS */
 .options{
-    margin-top:20px;
+    margin-top:25px;
 }
 
 .options label{
+    font-weight:bold;
     display:block;
     margin-bottom:8px;
-    font-weight:bold;
-    color:#374151;
 }
 
 select{
     width:100%;
     padding:12px;
-    border:1px solid #d1d5db;
     border-radius:8px;
+    border:1px solid #ccc;
 }
 
-button.convert-btn{
+/* BUTTON */
+.convert-btn{
     width:100%;
-    margin-top:20px;
+    margin-top:25px;
     padding:15px;
-    background:#2563eb;
-    color:white;
     border:none;
     border-radius:10px;
-    font-size:17px;
+    background:#2563eb;
+    color:white;
+    font-size:18px;
     cursor:pointer;
 }
 
-button.convert-btn:hover{
+.convert-btn:hover{
     background:#1d4ed8;
 }
 
@@ -163,79 +173,53 @@ button.convert-btn:hover{
     margin-top:15px;
     text-align:center;
     font-weight:bold;
-    color:#111827;
 }
 
+/* HIDE INPUT */
 input[type=file]{
     display:none;
 }
 
-.empty{
-    text-align:center;
-    color:#6b7280;
-    padding:15px;
-}
-
+/* MOBILE */
 @media(max-width:600px){
-
     .container{
         padding:20px;
     }
 
-    .dropzone{
-        padding:25px;
-    }
-
-    .file-name{
-        max-width:70%;
+    h1{
+        font-size:28px;
     }
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
 
 <h1>Image → PDF Converter</h1>
 
-<label class="dropzone" id="dropzone">
+<!-- FIXED DROPZONE -->
+<div class="dropzone" id="dropzone">
     <h3>Upload Images</h3>
-    <p>Click or drag and drop images here</p>
-</label>
+    <p>Click or drag & drop files here</p>
+</div>
 
-<input
-type="file"
-id="images"
-multiple
-accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.avif,image/*"
-
->
+<input type="file" id="images" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.avif">
 
 <div class="note">
-    <strong>Note:</strong>
-    Currently supported formats:
-    JPG, JPEG, PNG, WEBP, GIF, BMP and AVIF.
+    <b>Note:</b> Supported formats: JPG, JPEG, PNG, WEBP, GIF, BMP, AVIF
 </div>
 
 <div id="fileCount"></div>
-
-<div id="fileList">
-    <div class="empty">
-        No files selected.
-    </div>
-</div>
+<div id="fileList"></div>
 
 <div class="options">
-    <label for="pageSize">PDF Page Size</label>
-
-```
-<select id="pageSize">
-    <option value="A4">A4</option>
-    <option value="LETTER">Letter</option>
-</select>
-```
-
+    <label>PDF Page Size</label>
+    <select id="pageSize">
+        <option value="A4">A4</option>
+        <option value="LETTER">Letter</option>
+    </select>
 </div>
 
 <button class="convert-btn" id="convertBtn">
@@ -256,10 +240,10 @@ const status = document.getElementById("status");
 
 let selectedFiles = [];
 
-dropzone.addEventListener("click", () => {
-    input.click();
-});
+/* CLICK */
+dropzone.addEventListener("click", () => input.click());
 
+/* DRAG */
 dropzone.addEventListener("dragover", e => {
     e.preventDefault();
     dropzone.classList.add("dragover");
@@ -270,80 +254,62 @@ dropzone.addEventListener("dragleave", () => {
 });
 
 dropzone.addEventListener("drop", e => {
-
     e.preventDefault();
-
     dropzone.classList.remove("dragover");
 
-    const files =
-        Array.from(e.dataTransfer.files);
-
-    selectedFiles =
-        [...selectedFiles, ...files];
+    selectedFiles = [
+        ...selectedFiles,
+        ...Array.from(e.dataTransfer.files)
+    ];
 
     renderFiles();
 });
 
+/* INPUT */
 input.addEventListener("change", () => {
-
-    const files =
-        Array.from(input.files);
-
-    selectedFiles =
-        [...selectedFiles, ...files];
+    selectedFiles = [
+        ...selectedFiles,
+        ...Array.from(input.files)
+    ];
 
     renderFiles();
-
     input.value = "";
 });
 
+/* RENDER FILES */
 function renderFiles(){
 
     if(selectedFiles.length === 0){
-
         fileCount.innerHTML = "";
-
-        fileList.innerHTML =
-            '<div class="empty">No files selected.</div>';
-
+        fileList.innerHTML = "<p>No files selected.</p>";
         return;
     }
 
-    fileCount.innerHTML =
-        `${selectedFiles.length} file(s) selected`;
+    fileCount.innerHTML = `${selectedFiles.length} file(s) selected`;
 
     fileList.innerHTML = "";
 
     selectedFiles.forEach((file,index)=>{
 
-        const item =
-            document.createElement("div");
+        const div = document.createElement("div");
+        div.className = "file-item";
 
-        item.className = "file-item";
-
-        item.innerHTML = `
+        div.innerHTML = `
             <span class="file-name">${file.name}</span>
-
-            <button
-                class="remove-btn"
-                onclick="removeFile(${index})"
-                title="Remove File"
-            >
-                ✕
-            </button>
+            <button class="remove-btn" onclick="removeFile(${index})">✕</button>
         `;
 
-        fileList.appendChild(item);
+        fileList.appendChild(div);
     });
 }
 
+/* REMOVE FILE */
 function removeFile(index){
-
     selectedFiles.splice(index,1);
-
     renderFiles();
 }
 
+/* RESIZE IMAGE */
 async function resizeImage(file){
 
     return new Promise((resolve,reject)=>{
@@ -352,190 +318,95 @@ async function resizeImage(file){
 
         img.onload = () => {
 
-            const canvas =
-                document.createElement("canvas");
-
-            const maxWidth = 1800;
+            const canvas = document.createElement("canvas");
 
             let width = img.width;
             let height = img.height;
 
+            const maxWidth = 1800;
+
             if(width > maxWidth){
-
-                height =
-                    height * (maxWidth / width);
-
+                height *= maxWidth / width;
                 width = maxWidth;
             }
 
             canvas.width = width;
             canvas.height = height;
 
-            const ctx =
-                canvas.getContext("2d");
+            const ctx = canvas.getContext("2d");
 
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(
-                0,
-                0,
-                width,
-                height
-            );
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(0,0,width,height);
 
-            ctx.drawImage(
-                img,
-                0,
-                0,
-                width,
-                height
-            );
+            ctx.drawImage(img,0,0,width,height);
 
-            canvas.toBlob(
-                blob => resolve(blob),
-                "image/jpeg",
-                0.9
-            );
+            canvas.toBlob(blob => resolve(blob), "image/jpeg", 0.9);
         };
 
         img.onerror = reject;
-
-        img.src =
-            URL.createObjectURL(file);
+        img.src = URL.createObjectURL(file);
     });
 }
 
-document
-.getElementById("convertBtn")
-.addEventListener("click", createPDF);
+/* CREATE PDF */
+document.getElementById("convertBtn").addEventListener("click", createPDF);
 
 async function createPDF(){
 
     if(selectedFiles.length === 0){
-
-        alert(
-            "Please select at least one image."
-        );
-
+        alert("Please select images first");
         return;
     }
 
-    try{
+    status.innerHTML = "Creating PDF...";
 
-        status.innerHTML =
-            "Creating PDF...";
+    const pdfDoc = await PDFLib.PDFDocument.create();
 
-        const pdfDoc =
-            await PDFLib.PDFDocument.create();
+    let pageWidth = 595, pageHeight = 842;
 
-        const pageType =
-            document.getElementById("pageSize")
-            .value;
-
-        let pageWidth;
-        let pageHeight;
-
-        if(pageType === "LETTER"){
-
-            pageWidth = 612;
-            pageHeight = 792;
-        }
-        else{
-
-            pageWidth = 595;
-            pageHeight = 842;
-        }
-
-        let count = 0;
-
-        for(const file of selectedFiles){
-
-            count++;
-
-            status.innerHTML =
-                `Processing ${count} of ${selectedFiles.length}`;
-
-            const compressed =
-                await resizeImage(file);
-
-            const bytes =
-                await compressed.arrayBuffer();
-
-            const image =
-                await pdfDoc.embedJpg(bytes);
-
-            const page =
-                pdfDoc.addPage([
-                    pageWidth,
-                    pageHeight
-                ]);
-
-            const margin = 20;
-
-            const scale = Math.min(
-                (pageWidth - margin * 2)
-                    / image.width,
-                (pageHeight - margin * 2)
-                    / image.height
-            );
-
-            const imgWidth =
-                image.width * scale;
-
-            const imgHeight =
-                image.height * scale;
-
-            page.drawImage(image,{
-                x:(pageWidth-imgWidth)/2,
-                y:(pageHeight-imgHeight)/2,
-                width:imgWidth,
-                height:imgHeight
-            });
-        }
-
-        const pdfBytes =
-            await pdfDoc.save();
-
-        const blob =
-            new Blob(
-                [pdfBytes],
-                {
-                    type:"application/pdf"
-                }
-            );
-
-        const url =
-            URL.createObjectURL(blob);
-
-        const a =
-            document.createElement("a");
-
-        a.href = url;
-        a.download = "images.pdf";
-
-        document.body.appendChild(a);
-
-        a.click();
-
-        document.body.removeChild(a);
-
-        setTimeout(()=>{
-            URL.revokeObjectURL(url);
-        },3000);
-
-        status.innerHTML =
-            "PDF downloaded successfully.";
+    if(document.getElementById("pageSize").value === "LETTER"){
+        pageWidth = 612;
+        pageHeight = 792;
     }
-    catch(error){
 
-        console.error(error);
+    for(const file of selectedFiles){
 
-        status.innerHTML =
-            "Error: " + error.message;
+        const blob = await resizeImage(file);
+        const bytes = await blob.arrayBuffer();
 
-        alert(
-            "Error: " + error.message
+        const image = await pdfDoc.embedJpg(bytes);
+
+        const page = pdfDoc.addPage([pageWidth,pageHeight]);
+
+        const scale = Math.min(
+            pageWidth / image.width,
+            pageHeight / image.height
         );
+
+        const w = image.width * scale;
+        const h = image.height * scale;
+
+        page.drawImage(image,{
+            x:(pageWidth-w)/2,
+            y:(pageHeight-h)/2,
+            width:w,
+            height:h
+        });
     }
+
+    const pdfBytes = await pdfDoc.save();
+
+    const blob = new Blob([pdfBytes],{type:"application/pdf"});
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "images.pdf";
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    status.innerHTML = "PDF downloaded successfully!";
 }
 
 </script>
