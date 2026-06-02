@@ -20,115 +20,175 @@ body{
     min-height:100vh;
     display:flex;
     justify-content:center;
+    align-items:center;
     padding:20px;
 }
 
+/* FIXED CONTAINER */
 .container{
     width:100%;
     max-width:900px;
     background:#fff;
-    border-radius:18px;
-    padding:30px;
+    border-radius:20px;
+    padding:40px;
     box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
+/* TITLE FIX */
 h1{
     text-align:center;
-    margin-bottom:20px;
+    color:#111827;
+    margin-bottom:30px;
+    font-size:40px;
 }
 
-/* DROPZONE */
+/* FIXED DROPZONE */
 .dropzone{
+    width:100%;
+    min-height:180px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
     border:2px dashed #2563eb;
     border-radius:12px;
-    padding:30px;
-    text-align:center;
+
     background:#eff6ff;
+
+    text-align:center;
     cursor:pointer;
+
+    transition:.3s;
 }
 
-/* NOTE */
+.dropzone:hover{
+    background:#dbeafe;
+}
+
+.dropzone.dragover{
+    background:#bfdbfe;
+}
+
+.dropzone h3{
+    color:#1d4ed8;
+    margin-bottom:10px;
+    font-size:28px;
+}
+
+.dropzone p{
+    color:#6b7280;
+    font-size:16px;
+}
+
+/* NOTE BOX */
 .note{
-    margin-top:15px;
+    margin-top:20px;
     padding:12px;
     background:#fff7ed;
     border:1px solid #fdba74;
     border-radius:8px;
+    color:#9a3412;
+    font-size:14px;
 }
 
-/* GRID */
-.preview-grid{
+/* FILE LIST */
+#fileCount{
     margin-top:20px;
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
-    gap:12px;
+    font-weight:bold;
+    text-align:center;
 }
 
-/* DRAG ITEM */
-.preview-item{
-    position:relative;
+#fileList{
+    margin-top:15px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.file-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+    border:1px solid #e5e7eb;
     border-radius:10px;
+    background:#f9fafb;
+}
+
+.file-name{
     overflow:hidden;
-    border:2px solid transparent;
-    background:#fff;
-    cursor:grab;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width:80%;
 }
 
-.preview-item.dragging{
-    opacity:0.5;
-    border:2px dashed #2563eb;
-}
-
-.preview-item img{
-    width:100%;
-    height:120px;
-    object-fit:cover;
-    display:block;
-}
-
-/* REMOVE BUTTON */
-.remove-img{
-    position:absolute;
-    top:5px;
-    right:5px;
-    background:red;
-    color:white;
+.remove-btn{
+    width:32px;
+    height:32px;
     border:none;
-    width:24px;
-    height:24px;
     border-radius:50%;
+    background:#ef4444;
+    color:white;
     cursor:pointer;
 }
 
 /* OPTIONS */
 .options{
-    margin-top:20px;
+    margin-top:25px;
+}
+
+.options label{
+    font-weight:bold;
+    display:block;
+    margin-bottom:8px;
 }
 
 select{
     width:100%;
-    padding:10px;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
 }
 
 /* BUTTON */
-button{
+.convert-btn{
     width:100%;
-    margin-top:20px;
+    margin-top:25px;
     padding:15px;
-    background:#2563eb;
-    color:white;
     border:none;
     border-radius:10px;
+    background:#2563eb;
+    color:white;
     font-size:18px;
     cursor:pointer;
 }
 
-button:hover{
+.convert-btn:hover{
     background:#1d4ed8;
 }
 
-input{
+#status{
+    margin-top:15px;
+    text-align:center;
+    font-weight:bold;
+}
+
+/* HIDE INPUT */
+input[type=file]{
     display:none;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+    .container{
+        padding:20px;
+    }
+
+    h1{
+        font-size:28px;
+    }
 }
 </style>
 </head>
@@ -139,27 +199,34 @@ input{
 
 <h1>Image → PDF Converter</h1>
 
+<!-- FIXED DROPZONE -->
 <div class="dropzone" id="dropzone">
-    Click or Drop Images Here
+    <h3>Upload Images</h3>
+    <p>Click or drag & drop files here</p>
 </div>
 
-<input type="file" id="images" multiple accept="image/*">
+<input type="file" id="images" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.avif">
 
 <div class="note">
-    Supported: JPG, PNG, WEBP, GIF, BMP, AVIF
+    <b>Note:</b> Supported formats: JPG, JPEG, PNG, WEBP, GIF, BMP, AVIF
 </div>
 
-<!-- PREVIEW GRID -->
-<div class="preview-grid" id="previewGrid"></div>
+<div id="fileCount"></div>
+<div id="fileList"></div>
 
 <div class="options">
+    <label>PDF Page Size</label>
     <select id="pageSize">
         <option value="A4">A4</option>
         <option value="LETTER">Letter</option>
     </select>
 </div>
 
-<button id="convertBtn">Convert to PDF</button>
+<button class="convert-btn" id="convertBtn">
+    Convert & Download PDF
+</button>
+
+<div id="status"></div>
 
 </div>
 
@@ -167,136 +234,163 @@ input{
 
 const input = document.getElementById("images");
 const dropzone = document.getElementById("dropzone");
-const grid = document.getElementById("previewGrid");
+const fileList = document.getElementById("fileList");
+const fileCount = document.getElementById("fileCount");
+const status = document.getElementById("status");
 
 let selectedFiles = [];
 
-/* OPEN */
-dropzone.onclick = () => input.click();
+/* CLICK */
+dropzone.addEventListener("click", () => input.click());
+
+/* DRAG */
+dropzone.addEventListener("dragover", e => {
+    e.preventDefault();
+    dropzone.classList.add("dragover");
+});
+
+dropzone.addEventListener("dragleave", () => {
+    dropzone.classList.remove("dragover");
+});
+
+dropzone.addEventListener("drop", e => {
+    e.preventDefault();
+    dropzone.classList.remove("dragover");
+
+    selectedFiles = [
+        ...selectedFiles,
+        ...Array.from(e.dataTransfer.files)
+    ];
+
+    renderFiles();
+});
 
 /* INPUT */
-input.onchange = () => addFiles(input.files);
+input.addEventListener("change", () => {
+    selectedFiles = [
+        ...selectedFiles,
+        ...Array.from(input.files)
+    ];
 
-/* DROP */
-dropzone.ondragover = e => e.preventDefault();
-dropzone.ondrop = e => {
-    e.preventDefault();
-    addFiles(e.dataTransfer.files);
-};
+    renderFiles();
+    input.value = "";
+});
 
-/* ADD FILES */
-function addFiles(files){
-    selectedFiles = [...selectedFiles, ...files];
-    render();
-}
+/* RENDER FILES */
+function renderFiles(){
 
-/* RENDER */
-function render(){
+    if(selectedFiles.length === 0){
+        fileCount.innerHTML = "";
+        fileList.innerHTML = "<p>No files selected.</p>";
+        return;
+    }
 
-    grid.innerHTML = "";
+    fileCount.innerHTML = `${selectedFiles.length} file(s) selected`;
+
+    fileList.innerHTML = "";
 
     selectedFiles.forEach((file,index)=>{
 
-        const reader = new FileReader();
+        const div = document.createElement("div");
+        div.className = "file-item";
 
-        reader.onload = (e)=>{
+        div.innerHTML = `
+            <span class="file-name">${file.name}</span>
+            <button class="remove-btn" onclick="removeFile(${index})">✕</button>
+        `;
 
-            const div = document.createElement("div");
-            div.className = "preview-item";
-            div.draggable = true;
-            div.dataset.index = index;
-
-            div.innerHTML = `
-                <img src="${e.target.result}">
-                <button class="remove-img" onclick="removeFile(${index})">×</button>
-            `;
-
-            /* DRAG START */
-            div.addEventListener("dragstart", () => {
-                div.classList.add("dragging");
-                draggedIndex = index;
-            });
-
-            div.addEventListener("dragend", () => {
-                div.classList.remove("dragging");
-            });
-
-            grid.appendChild(div);
-        };
-
-        reader.readAsDataURL(file);
+        fileList.appendChild(div);
     });
 }
 
-/* REMOVE */
+/* REMOVE FILE */
 function removeFile(index){
     selectedFiles.splice(index,1);
-    render();
+    renderFiles();
 }
 
-/* DRAG REORDER LOGIC */
-let draggedIndex = null;
+/* RESIZE IMAGE */
+async function resizeImage(file){
 
-grid.addEventListener("dragover", e => {
-    e.preventDefault();
+    return new Promise((resolve,reject)=>{
 
-    const afterElement = getDragAfterElement(grid, e.clientY);
-    const dragging = document.querySelector(".dragging");
+        const img = new Image();
 
-    if(!dragging) return;
+        img.onload = () => {
 
-    if(afterElement == null){
-        grid.appendChild(dragging);
-    }else{
-        grid.insertBefore(dragging, afterElement);
+            const canvas = document.createElement("canvas");
+
+            let width = img.width;
+            let height = img.height;
+
+            const maxWidth = 1800;
+
+            if(width > maxWidth){
+                height *= maxWidth / width;
+                width = maxWidth;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(0,0,width,height);
+
+            ctx.drawImage(img,0,0,width,height);
+
+            canvas.toBlob(blob => resolve(blob), "image/jpeg", 0.9);
+        };
+
+        img.onerror = reject;
+        img.src = URL.createObjectURL(file);
+    });
+}
+
+/* CREATE PDF */
+document.getElementById("convertBtn").addEventListener("click", createPDF);
+
+async function createPDF(){
+
+    if(selectedFiles.length === 0){
+        alert("Please select images first");
+        return;
     }
-});
 
-/* CALCULATE POSITION */
-function getDragAfterElement(container, y){
-
-    const elements = [...container.querySelectorAll(".preview-item:not(.dragging)")];
-
-    return elements.reduce((closest, child) => {
-
-        const box = child.getBoundingClientRect();
-        const offset = y - box.top - box.height / 2;
-
-        if(offset < 0 && offset > closest.offset){
-            return { offset, element: child };
-        } else {
-            return closest;
-        }
-
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
-}
-
-/* CONVERT PDF */
-document.getElementById("convertBtn").onclick = async () => {
+    status.innerHTML = "Creating PDF...";
 
     const pdfDoc = await PDFLib.PDFDocument.create();
 
-    const items = [...document.querySelectorAll(".preview-item img")];
+    let pageWidth = 595, pageHeight = 842;
 
-    for(const imgEl of items){
+    if(document.getElementById("pageSize").value === "LETTER"){
+        pageWidth = 612;
+        pageHeight = 792;
+    }
 
-        const response = await fetch(imgEl.src);
-        const bytes = await response.arrayBuffer();
+    for(const file of selectedFiles){
+
+        const blob = await resizeImage(file);
+        const bytes = await blob.arrayBuffer();
 
         const image = await pdfDoc.embedJpg(bytes);
 
-        const page = pdfDoc.addPage([595,842]);
+        const page = pdfDoc.addPage([pageWidth,pageHeight]);
 
         const scale = Math.min(
-            595 / image.width,
-            842 / image.height
+            pageWidth / image.width,
+            pageHeight / image.height
         );
 
+        const w = image.width * scale;
+        const h = image.height * scale;
+
         page.drawImage(image,{
-            x:(595 - image.width * scale)/2,
-            y:(842 - image.height * scale)/2,
-            width:image.width * scale,
-            height:image.height * scale
+            x:(pageWidth-w)/2,
+            y:(pageHeight-h)/2,
+            width:w,
+            height:h
         });
     }
 
@@ -311,7 +405,9 @@ document.getElementById("convertBtn").onclick = async () => {
     a.click();
 
     URL.revokeObjectURL(url);
-};
+
+    status.innerHTML = "PDF downloaded successfully!";
+}
 
 </script>
 
