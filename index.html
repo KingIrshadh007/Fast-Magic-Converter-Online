@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,51 +9,97 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
 <style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
 body{
     font-family:Arial,sans-serif;
-    background:#f5f5f5;
+    background:#f3f4f6;
+    min-height:100vh;
     padding:20px;
 }
 
 .container{
-    max-width:600px;
+    max-width:700px;
     margin:auto;
     background:#fff;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,.1);
+    border-radius:12px;
+    padding:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
 h1{
     text-align:center;
+    margin-bottom:20px;
+    color:#111827;
+}
+
+.dropzone{
+    border:2px dashed #3b82f6;
+    border-radius:10px;
+    padding:30px;
+    text-align:center;
+    cursor:pointer;
+    background:#eff6ff;
+    transition:.3s;
+}
+
+.dropzone:hover{
+    background:#dbeafe;
+}
+
+.dropzone.dragover{
+    background:#bfdbfe;
 }
 
 input[type=file]{
+    display:none;
+}
+
+.options{
+    margin-top:20px;
+}
+
+select{
     width:100%;
-    margin:15px 0;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
 }
 
 button{
     width:100%;
+    margin-top:20px;
     padding:15px;
-    border:none;
     background:#2563eb;
     color:white;
-    font-size:18px;
+    border:none;
     border-radius:8px;
+    font-size:17px;
     cursor:pointer;
 }
 
 button:hover{
-    opacity:.95;
+    background:#1d4ed8;
+}
+
+#fileList{
+    margin-top:15px;
+    font-size:14px;
+    color:#374151;
 }
 
 #status{
     margin-top:15px;
     text-align:center;
     font-weight:bold;
+    color:#111827;
 }
 </style>
+
 </head>
 <body>
 
@@ -60,9 +107,33 @@ button:hover{
 
 <h1>Image → PDF Converter</h1>
 
-<input type="file" id="images" multiple accept="image/*">
+<label class="dropzone" id="dropzone">
+    <p>Click or Drag Images Here</p>
+    <small>
+        JPG, JPEG, PNG, WEBP, GIF, BMP, AVIF
+    </small>
+</label>
 
-<button id="convertBtn">Convert & Download PDF</button>
+<input
+type="file"
+id="images"
+multiple
+accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.avif,image/*"
+
+>
+
+<div id="fileList"></div>
+
+<div class="options">
+    <select id="pageSize">
+        <option value="A4">A4</option>
+        <option value="LETTER">Letter</option>
+    </select>
+</div>
+
+<button id="convertBtn">
+    Convert & Download PDF
+</button>
 
 <div id="status"></div>
 
@@ -70,10 +141,48 @@ button:hover{
 
 <script>
 
-document.getElementById("convertBtn")
-.addEventListener("click", createPDF);
+const input = document.getElementById("images");
+const dropzone = document.getElementById("dropzone");
+const fileList = document.getElementById("fileList");
+const status = document.getElementById("status");
 
-async function resizeImage(file){
+dropzone.addEventListener("click", () => input.click());
+
+dropzone.addEventListener("dragover", e => {
+    e.preventDefault();
+    dropzone.classList.add("dragover");
+});
+
+dropzone.addEventListener("dragleave", () => {
+    dropzone.classList.remove("dragover");
+});
+
+dropzone.addEventListener("drop", e => {
+    e.preventDefault();
+    dropzone.classList.remove("dragover");
+    input.files = e.dataTransfer.files;
+    updateFileList();
+});
+
+input.addEventListener("change", updateFileList);
+
+function updateFileList(){
+
+    const files = input.files;
+
+    if(!files.length){
+        fileList.innerHTML = "";
+        return;
+    }
+
+    fileList.innerHTML =
+        "<strong>Selected Files:</strong><br>" +
+        [...files]
+        .map(f => f.name)
+        .join("<br>");
+}
+
+async function fileToImageBlob(file){
 
     return new Promise((resolve,reject)=>{
 
@@ -84,20 +193,32 @@ async function resizeImage(file){
             const canvas =
                 document.createElement("canvas");
 
-            const maxWidth = 1200;
+            const maxWidth = 1800;
 
             let width = img.width;
             let height = img.height;
 
             if(width > maxWidth){
-                height = height * (maxWidth / width);
+
+                height =
+                    height * (maxWidth / width);
+
                 width = maxWidth;
             }
 
             canvas.width = width;
             canvas.height = height;
 
-            const ctx = canvas.getContext("2d");
+            const ctx =
+                canvas.getContext("2d");
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(
+                0,
+                0,
+                width,
+                height
+            );
 
             ctx.drawImage(
                 img,
@@ -110,66 +231,99 @@ async function resizeImage(file){
             canvas.toBlob(
                 blob => resolve(blob),
                 "image/jpeg",
-                0.8
+                0.9
             );
         };
 
         img.onerror = reject;
 
-        img.src = URL.createObjectURL(file);
+        img.src =
+            URL.createObjectURL(file);
     });
 }
 
+document
+.getElementById("convertBtn")
+.addEventListener("click", createPDF);
+
 async function createPDF(){
 
-    const files =
-        document.getElementById("images").files;
-
-    const status =
-        document.getElementById("status");
+    const files = input.files;
 
     if(files.length === 0){
-        alert("Please select at least one image.");
+
+        alert("Select images first.");
         return;
     }
 
     try{
 
-        status.innerHTML = "Creating PDF...";
+        status.innerHTML =
+            "Creating PDF...";
 
         const pdfDoc =
             await PDFLib.PDFDocument.create();
 
+        const pageType =
+            document.getElementById("pageSize")
+            .value;
+
+        let pageWidth,pageHeight;
+
+        if(pageType === "LETTER"){
+            pageWidth = 612;
+            pageHeight = 792;
+        }
+        else{
+            pageWidth = 595;
+            pageHeight = 842;
+        }
+
+        let count = 0;
+
         for(const file of files){
 
-            const compressed =
-                await resizeImage(file);
+            count++;
+
+            status.innerHTML =
+                `Processing ${count}/${files.length}`;
+
+            const blob =
+                await fileToImageBlob(file);
 
             const bytes =
-                await compressed.arrayBuffer();
+                await blob.arrayBuffer();
 
             const image =
                 await pdfDoc.embedJpg(bytes);
 
             const page =
-                pdfDoc.addPage([595,842]);
+                pdfDoc.addPage([
+                    pageWidth,
+                    pageHeight
+                ]);
+
+            const margin = 20;
 
             const scale = Math.min(
-                555 / image.width,
-                802 / image.height
+                (pageWidth - margin * 2)
+                / image.width,
+
+                (pageHeight - margin * 2)
+                / image.height
             );
 
-            const imgWidth =
+            const width =
                 image.width * scale;
 
-            const imgHeight =
+            const height =
                 image.height * scale;
 
             page.drawImage(image,{
-                x:(595-imgWidth)/2,
-                y:(842-imgHeight)/2,
-                width:imgWidth,
-                height:imgHeight
+                x:(pageWidth-width)/2,
+                y:(pageHeight-height)/2,
+                width,
+                height
             });
         }
 
@@ -179,27 +333,27 @@ async function createPDF(){
         const blob =
             new Blob(
                 [pdfBytes],
-                {type:"application/pdf"}
+                {
+                    type:"application/pdf"
+                }
             );
 
         const url =
             URL.createObjectURL(blob);
 
-        const link =
+        const a =
             document.createElement("a");
 
-        link.href = url;
-        link.download = "images.pdf";
+        a.href = url;
+        a.download = "images.pdf";
 
-        document.body.appendChild(link);
-
-        link.click();
-
-        document.body.removeChild(link);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
 
         setTimeout(()=>{
             URL.revokeObjectURL(url);
-        },5000);
+        },3000);
 
         status.innerHTML =
             "PDF downloaded successfully.";
@@ -212,7 +366,7 @@ async function createPDF(){
         status.innerHTML =
             "Error: " + err.message;
 
-        alert("Error: " + err.message);
+        alert(err.message);
     }
 }
 </script>
