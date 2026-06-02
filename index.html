@@ -3,298 +3,218 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ConvertPro - Online File Converter</title>
+<title>Image to PDF Converter</title>
+
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
 <style>
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
 }
 
 body{
-    background:#f5f7fb;
-}
-
-header{
-    background:#2563eb;
-    color:white;
+    background:#f4f7fc;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
     padding:20px;
 }
 
-nav{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    max-width:1200px;
-    margin:auto;
-}
-
-.logo{
-    font-size:28px;
-    font-weight:bold;
-}
-
-.menu a{
-    color:white;
-    text-decoration:none;
-    margin-left:20px;
-}
-
-.hero{
-    text-align:center;
-    padding:70px 20px;
-    background:linear-gradient(to right,#2563eb,#1d4ed8);
-    color:white;
-}
-
-.hero h1{
-    font-size:48px;
-    margin-bottom:15px;
-}
-
-.hero p{
-    font-size:18px;
-    margin-bottom:30px;
-}
-
-.converter-box{
+.container{
+    width:100%;
     max-width:700px;
-    background:white;
-    margin:0 auto;
+    background:#fff;
     padding:30px;
     border-radius:15px;
-    box-shadow:0 0 20px rgba(0,0,0,0.15);
+    box-shadow:0 5px 20px rgba(0,0,0,.15);
 }
 
-.upload-area{
-    border:2px dashed #2563eb;
-    padding:40px;
-    border-radius:10px;
+h1{
+    text-align:center;
+    color:#2563eb;
     margin-bottom:20px;
 }
 
-.upload-area input{
-    width:100%;
+.dropzone{
+    border:3px dashed #2563eb;
+    border-radius:12px;
+    padding:40px;
+    text-align:center;
+    cursor:pointer;
+    transition:.3s;
 }
 
-select{
+.dropzone.dragover{
+    background:#eaf2ff;
+}
+
+input[type=file]{
+    display:none;
+}
+
+.preview{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+    gap:10px;
+    margin-top:20px;
+}
+
+.preview img{
     width:100%;
-    padding:12px;
-    margin:10px 0;
-    border:1px solid #ccc;
+    height:120px;
+    object-fit:cover;
     border-radius:8px;
 }
 
 button{
     width:100%;
-    padding:15px;
+    margin-top:20px;
+    padding:14px;
     border:none;
-    border-radius:8px;
     background:#2563eb;
-    color:white;
+    color:#fff;
     font-size:18px;
+    border-radius:8px;
     cursor:pointer;
 }
 
 button:hover{
-    background:#1e40af;
+    background:#1d4ed8;
 }
 
-.tools{
-    max-width:1200px;
-    margin:60px auto;
-    padding:20px;
-}
-
-.tools h2{
+.status{
     text-align:center;
-    margin-bottom:30px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
-}
-
-.card{
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    text-align:center;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-
-.card h3{
-    color:#2563eb;
-    margin-bottom:10px;
-}
-
-.features{
-    background:white;
-    padding:60px 20px;
-}
-
-.features h2{
-    text-align:center;
-    margin-bottom:40px;
-}
-
-.feature-grid{
-    max-width:1200px;
-    margin:auto;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:25px;
-}
-
-.feature{
-    text-align:center;
-}
-
-.feature h3{
-    color:#2563eb;
-    margin-bottom:10px;
-}
-
-footer{
-    background:#111827;
-    color:white;
-    text-align:center;
-    padding:25px;
-}
-
-footer a{
-    color:#93c5fd;
-    text-decoration:none;
+    margin-top:15px;
+    color:#555;
 }
 </style>
 </head>
-
 <body>
 
-<header>
-<nav>
-<div class="logo">ConvertPro</div>
-<div class="menu">
-<a href="#">Home</a>
-<a href="#">Tools</a>
-<a href="#">Pricing</a>
-<a href="#">Contact</a>
-</div>
-</nav>
-</header>
+<div class="container">
 
-<section class="hero">
-<h1>Convert Files Instantly</h1>
-<p>Convert PDF, Word, PowerPoint and Images online for free.</p>
+<h1>Image to PDF Converter</h1>
 
-<div class="converter-box">
+<label class="dropzone" id="dropzone">
+    <p>📁 Click or Drag Images Here</p>
+    <p>Supports JPG, PNG, WEBP</p>
+    <input type="file" id="images" multiple accept="image/*">
+</label>
 
-<form>
+<div class="preview" id="preview"></div>
 
-<div class="upload-area">
-<h3>Select File</h3>
-<br>
-<input type="file">
-</div>
-
-<select>
-<option>Image to PDF</option>
-<option>Word to PDF</option>
-<option>PDF to Word</option>
-<option>PPT to PDF</option>
-<option>PDF to PPT</option>
-<option>Word to PPT</option>
-</select>
-
-<button type="submit">
-Convert Now
+<button id="convertBtn">
+Convert to PDF
 </button>
 
-</form>
-
-</div>
-</section>
-
-<section class="tools">
-<h2>Popular Conversion Tools</h2>
-
-<div class="grid">
-
-<div class="card">
-<h3>Image to PDF</h3>
-<p>Convert JPG, PNG and WEBP images to PDF.</p>
-</div>
-
-<div class="card">
-<h3>PDF to Word</h3>
-<p>Convert PDF documents into editable Word files.</p>
-</div>
-
-<div class="card">
-<h3>Word to PDF</h3>
-<p>Create professional PDF documents instantly.</p>
-</div>
-
-<div class="card">
-<h3>PPT to PDF</h3>
-<p>Convert PowerPoint presentations to PDF.</p>
-</div>
-
-<div class="card">
-<h3>PDF to PPT</h3>
-<p>Turn PDF files into PowerPoint slides.</p>
-</div>
-
-<div class="card">
-<h3>Word to PPT</h3>
-<p>Generate presentations from Word documents.</p>
-</div>
-
-</div>
-</section>
-
-<section class="features">
-
-<h2>Why Choose ConvertPro?</h2>
-
-<div class="feature-grid">
-
-<div class="feature">
-<h3>Fast Conversion</h3>
-<p>Convert files within seconds.</p>
-</div>
-
-<div class="feature">
-<h3>Secure Uploads</h3>
-<p>Your files are automatically deleted after processing.</p>
-</div>
-
-<div class="feature">
-<h3>Mobile Friendly</h3>
-<p>Works perfectly on Android, iPhone and tablets.</p>
-</div>
-
-<div class="feature">
-<h3>Cloud Based</h3>
-<p>No software installation required.</p>
-</div>
+<div class="status" id="status"></div>
 
 </div>
 
-</section>
+<script>
+const dropzone = document.getElementById('dropzone');
+const input = document.getElementById('images');
+const preview = document.getElementById('preview');
+const statusText = document.getElementById('status');
 
-<footer>
-<p>
-© 2026 ConvertPro. All Rights Reserved.
-</p>
-<br>
-<a href="#">Privacy Policy</a> |
-<a href="#">Terms of Service</a>
-</footer>
+let selectedFiles = [];
+
+dropzone.addEventListener('click', () => {
+    input.click();
+});
+
+input.addEventListener('change', (e) => {
+    selectedFiles = [...e.target.files];
+    showPreview();
+});
+
+dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+});
+
+dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('dragover');
+});
+
+dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+
+    selectedFiles = [...e.dataTransfer.files]
+        .filter(file => file.type.startsWith('image/'));
+
+    showPreview();
+});
+
+function showPreview(){
+    preview.innerHTML = '';
+
+    selectedFiles.forEach(file => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        preview.appendChild(img);
+    });
+}
+
+document.getElementById('convertBtn').addEventListener('click', async () => {
+
+    if(selectedFiles.length === 0){
+        alert('Please select images');
+        return;
+    }
+
+    statusText.textContent = 'Creating PDF...';
+
+    const pdfDoc = await PDFLib.PDFDocument.create();
+
+    for(const file of selectedFiles){
+
+        const bytes = await file.arrayBuffer();
+
+        let image;
+
+        if(file.type === 'image/png'){
+            image = await pdfDoc.embedPng(bytes);
+        }else{
+            image = await pdfDoc.embedJpg(bytes);
+        }
+
+        const page = pdfDoc.addPage([
+            image.width,
+            image.height
+        ]);
+
+        page.drawImage(image,{
+            x:0,
+            y:0,
+            width:image.width,
+            height:image.height
+        });
+    }
+
+    const pdfBytes = await pdfDoc.save();
+
+    const blob = new Blob(
+        [pdfBytes],
+        {type:'application/pdf'}
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'converted.pdf';
+    a.click();
+
+    statusText.textContent =
+        'PDF downloaded successfully!';
+});
+</script>
 
 </body>
 </html>
