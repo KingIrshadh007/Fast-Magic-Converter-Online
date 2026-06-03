@@ -3,159 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Image to PDF Converter</title>
+<title>ImagePDF Pro</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
 <style>
+
+/* ===== BASE ===== */
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
+    font-family:Arial,sans-serif;
 }
 
 body{
-    font-family:Arial,sans-serif;
     background:#f3f4f6;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
+    transition:0.3s;
 }
 
-/* FIXED CONTAINER */
+/* ===== HEADER ===== */
+.site-header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 30px;
+    background:white;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+    color:#2563eb;
+}
+
+.site-header nav{
+    display:flex;
+    gap:18px;
+}
+
+.site-header nav a{
+    text-decoration:none;
+    color:#374151;
+}
+
+#themeToggle{
+    border:none;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
+}
+
+/* ===== MAIN CONTAINER ===== */
 .container{
-    width:100%;
     max-width:900px;
-    background:#fff;
-    border-radius:20px;
+    margin:40px auto;
+    background:white;
     padding:40px;
+    border-radius:20px;
     box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
-/* TITLE FIX */
 h1{
     text-align:center;
-    color:#111827;
     margin-bottom:30px;
-    font-size:40px;
 }
 
-/* FIXED DROPZONE */
+/* DROPZONE */
 .dropzone{
-    width:100%;
     min-height:180px;
-
+    border:2px dashed #2563eb;
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
-
-    border:2px dashed #2563eb;
     border-radius:12px;
-
     background:#eff6ff;
-
-    text-align:center;
     cursor:pointer;
-
-    transition:.3s;
-}
-
-.dropzone:hover{
-    background:#dbeafe;
 }
 
 .dropzone.dragover{
     background:#bfdbfe;
 }
 
-.dropzone h3{
-    color:#1d4ed8;
-    margin-bottom:10px;
-    font-size:28px;
-}
-
-.dropzone p{
-    color:#6b7280;
-    font-size:16px;
-}
-
-/* NOTE BOX */
-.note{
-    margin-top:20px;
-    padding:12px;
-    background:#fff7ed;
-    border:1px solid #fdba74;
-    border-radius:8px;
-    color:#9a3412;
-    font-size:14px;
-}
-
 /* FILE LIST */
-#fileCount{
-    margin-top:20px;
-    font-weight:bold;
-    text-align:center;
-}
-
-#fileList{
-    margin-top:15px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
 .file-item{
     display:flex;
     justify-content:space-between;
-    align-items:center;
-    padding:12px 15px;
-    border:1px solid #e5e7eb;
-    border-radius:10px;
-    background:#f9fafb;
-}
-
-.file-name{
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    max-width:80%;
-}
-
-.remove-btn{
-    width:32px;
-    height:32px;
-    border:none;
-    border-radius:50%;
-    background:#ef4444;
-    color:white;
-    cursor:pointer;
-}
-
-/* OPTIONS */
-.options{
-    margin-top:25px;
-}
-
-.options label{
-    font-weight:bold;
-    display:block;
-    margin-bottom:8px;
-}
-
-select{
-    width:100%;
-    padding:12px;
+    padding:10px;
+    border:1px solid #ddd;
+    margin-top:10px;
     border-radius:8px;
-    border:1px solid #ccc;
 }
 
 /* BUTTON */
 .convert-btn{
     width:100%;
-    margin-top:25px;
+    margin-top:20px;
     padding:15px;
     border:none;
     border-radius:10px;
@@ -165,251 +115,248 @@ select{
     cursor:pointer;
 }
 
-.convert-btn:hover{
-    background:#1d4ed8;
-}
-
-#status{
-    margin-top:15px;
+/* FOOTER */
+.site-footer{
+    margin-top:50px;
+    padding:30px;
     text-align:center;
-    font-weight:bold;
+    background:#111827;
+    color:white;
 }
 
-/* HIDE INPUT */
-input[type=file]{
-    display:none;
+.footer-links a{
+    color:#ccc;
+    margin:0 10px;
+    text-decoration:none;
 }
 
-/* MOBILE */
-@media(max-width:600px){
-    .container{
-        padding:20px;
-    }
-
-    h1{
-        font-size:28px;
-    }
+/* DARK MODE */
+.dark-mode{
+    background:#111827;
+    color:white;
 }
+
+.dark-mode .container{
+    background:#1f2937;
+}
+
+.dark-mode .site-header{
+    background:#1f2937;
+}
+
+.dark-mode .site-header a{
+    color:white;
+}
+
+.dark-mode .file-item{
+    background:#374151;
+    border-color:#4b5563;
+}
+
+.dark-mode .dropzone{
+    background:#1e3a8a;
+}
+
 </style>
 </head>
 
 <body>
+<header class="site-header">
+    <div class="logo">📄 ImagePDF Pro</div>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Tools</a>
+        <a href="#">Features</a>
+        <a href="#">Contact</a>
+    </nav>
+
+    <button id="themeToggle">🌙 Dark Mode</button>
+</header>
 
 <div class="container">
 
 <h1>Image → PDF Converter</h1>
 
-<!-- FIXED DROPZONE -->
 <div class="dropzone" id="dropzone">
     <h3>Upload Images</h3>
-    <p>Click or drag & drop files here</p>
+    <p>Click or drag & drop</p>
 </div>
 
 <input type="file" id="images" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.avif">
 
-<div class="note">
-    <b>Note:</b> Supported formats: JPG, JPEG, PNG, WEBP, GIF, BMP, AVIF
-</div>
-
-<div id="fileCount"></div>
 <div id="fileList"></div>
 
-<div class="options">
-    <label>PDF Page Size</label>
-    <select id="pageSize">
-        <option value="A4">A4</option>
-        <option value="LETTER">Letter</option>
-    </select>
-</div>
-
 <button class="convert-btn" id="convertBtn">
-    Convert & Download PDF
+Convert & Download PDF
 </button>
 
 <div id="status"></div>
 
 </div>
+<footer class="site-footer">
+    <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+        <a href="#">Contact</a>
+    </div>
 
+    <p>© 2026 ImagePDF Pro</p>
+</footer>
 <script>
 
 const input = document.getElementById("images");
 const dropzone = document.getElementById("dropzone");
 const fileList = document.getElementById("fileList");
-const fileCount = document.getElementById("fileCount");
-const status = document.getElementById("status");
 
 let selectedFiles = [];
 
-/* CLICK */
-dropzone.addEventListener("click", () => input.click());
+/* DARK MODE */
+const themeToggle = document.getElementById("themeToggle");
 
-/* DRAG */
-dropzone.addEventListener("dragover", e => {
-    e.preventDefault();
-    dropzone.classList.add("dragover");
+if(localStorage.getItem("theme")==="dark"){
+    document.body.classList.add("dark-mode");
+    themeToggle.innerHTML="☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click",()=>{
+
+    document.body.classList.toggle("dark-mode");
+
+    if(document.body.classList.contains("dark-mode")){
+        localStorage.setItem("theme","dark");
+        themeToggle.innerHTML="☀️ Light Mode";
+    }else{
+        localStorage.setItem("theme","light");
+        themeToggle.innerHTML="🌙 Dark Mode";
+    }
 });
 
-dropzone.addEventListener("dragleave", () => {
-    dropzone.classList.remove("dragover");
-});
+/* DROP */
+dropzone.onclick = () => input.click();
 
-dropzone.addEventListener("drop", e => {
-    e.preventDefault();
-    dropzone.classList.remove("dragover");
-
-    selectedFiles = [
-        ...selectedFiles,
-        ...Array.from(e.dataTransfer.files)
-    ];
-
+input.addEventListener("change",()=>{
+    selectedFiles = [...selectedFiles, ...input.files];
     renderFiles();
 });
 
-/* INPUT */
-input.addEventListener("change", () => {
-    selectedFiles = [
-        ...selectedFiles,
-        ...Array.from(input.files)
-    ];
-
-    renderFiles();
-    input.value = "";
-});
-
-/* RENDER FILES */
+/* RENDER */
 function renderFiles(){
 
-    if(selectedFiles.length === 0){
-        fileCount.innerHTML = "";
-        fileList.innerHTML = "<p>No files selected.</p>";
-        return;
-    }
+    fileList.innerHTML="";
 
-    fileCount.innerHTML = `${selectedFiles.length} file(s) selected`;
+    selectedFiles.forEach((file,i)=>{
 
-    fileList.innerHTML = "";
+        const div=document.createElement("div");
+        div.className="file-item";
 
-    selectedFiles.forEach((file,index)=>{
-
-        const div = document.createElement("div");
-        div.className = "file-item";
-
-        div.innerHTML = `
-            <span class="file-name">${file.name}</span>
-            <button class="remove-btn" onclick="removeFile(${index})">✕</button>
+        div.innerHTML=`
+            <span>${file.name}</span>
+            <button onclick="removeFile(${i})">X</button>
         `;
 
         fileList.appendChild(div);
     });
 }
 
-/* REMOVE FILE */
-function removeFile(index){
-    selectedFiles.splice(index,1);
+function removeFile(i){
+    selectedFiles.splice(i,1);
     renderFiles();
 }
 
-/* RESIZE IMAGE */
+/* RESIZE */
 async function resizeImage(file){
 
-    return new Promise((resolve,reject)=>{
+    return new Promise(resolve=>{
 
-        const img = new Image();
+        const img=new Image();
 
-        img.onload = () => {
+        img.onload=()=>{
 
-            const canvas = document.createElement("canvas");
+            const canvas=document.createElement("canvas");
 
-            let width = img.width;
-            let height = img.height;
+            let w=img.width;
+            let h=img.height;
 
-            const maxWidth = 1800;
-
-            if(width > maxWidth){
-                height *= maxWidth / width;
-                width = maxWidth;
+            if(w>1800){
+                h*=1800/w;
+                w=1800;
             }
 
-            canvas.width = width;
-            canvas.height = height;
+            canvas.width=w;
+            canvas.height=h;
 
-            const ctx = canvas.getContext("2d");
+            const ctx=canvas.getContext("2d");
+            ctx.drawImage(img,0,0,w,h);
 
-            ctx.fillStyle = "#fff";
-            ctx.fillRect(0,0,width,height);
-
-            ctx.drawImage(img,0,0,width,height);
-
-            canvas.toBlob(blob => resolve(blob), "image/jpeg", 0.9);
+            canvas.toBlob(blob=>resolve(blob),"image/jpeg",0.9);
         };
 
-        img.onerror = reject;
-        img.src = URL.createObjectURL(file);
+        img.src=URL.createObjectURL(file);
     });
 }
 
 /* CREATE PDF */
-document.getElementById("convertBtn").addEventListener("click", createPDF);
+document.getElementById("convertBtn")
+.addEventListener("click",createPDF);
 
 async function createPDF(){
 
-    if(selectedFiles.length === 0){
-        alert("Please select images first");
+    if(selectedFiles.length===0){
+        alert("Select images first");
         return;
     }
 
-    status.innerHTML = "Creating PDF...";
-
-    const pdfDoc = await PDFLib.PDFDocument.create();
-
-    let pageWidth = 595, pageHeight = 842;
-
-    if(document.getElementById("pageSize").value === "LETTER"){
-        pageWidth = 612;
-        pageHeight = 792;
-    }
+    const pdfDoc=await PDFLib.PDFDocument.create();
 
     for(const file of selectedFiles){
 
-        const blob = await resizeImage(file);
-        const bytes = await blob.arrayBuffer();
+        const blob=await resizeImage(file);
+        const bytes=await blob.arrayBuffer();
 
-        const image = await pdfDoc.embedJpg(bytes);
+        const image=await pdfDoc.embedJpg(bytes);
 
-        const page = pdfDoc.addPage([pageWidth,pageHeight]);
+        const page=pdfDoc.addPage([595,842]);
 
-        const scale = Math.min(
-            pageWidth / image.width,
-            pageHeight / image.height
+        const scale=Math.min(
+            595/image.width,
+            842/image.height
         );
 
-        const w = image.width * scale;
-        const h = image.height * scale;
-
         page.drawImage(image,{
-            x:(pageWidth-w)/2,
-            y:(pageHeight-h)/2,
-            width:w,
-            height:h
+            x:(595-image.width*scale)/2,
+            y:(842-image.height*scale)/2,
+            width:image.width*scale,
+            height:image.height*scale
         });
     }
 
-    const pdfBytes = await pdfDoc.save();
+    /* PAGE NUMBERS */
+    const pages=pdfDoc.getPages();
 
-    const blob = new Blob([pdfBytes],{type:"application/pdf"});
-    const url = URL.createObjectURL(blob);
+    pages.forEach((p,i)=>{
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "images.pdf";
+        p.drawText(`Page ${i+1} of ${pages.length}`,{
+            x:240,
+            y:20,
+            size:10
+        });
+
+    });
+
+    const pdfBytes=await pdfDoc.save();
+
+    const blob=new Blob([pdfBytes],{type:"application/pdf"});
+
+    const url=URL.createObjectURL(blob);
+
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="images.pdf";
     a.click();
 
     URL.revokeObjectURL(url);
-
-    status.innerHTML = "PDF downloaded successfully!";
 }
 
 </script>
-
-</body>
-</html>
