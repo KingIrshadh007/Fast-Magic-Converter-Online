@@ -44,7 +44,6 @@ body{
 .site-header nav{
     display:flex;
     gap:18px;
-    align-items:center;
 }
 
 .site-header nav a{
@@ -52,38 +51,13 @@ body{
     color:#374151;
 }
 
-/* ===== DROPDOWN ===== */
-.dropdown{
-    position:relative;
-    display:inline-block;
-}
-
-.dropdown-content{
-    display:none;
-    position:absolute;
-    top:100%;
-    left:0;
-    min-width:220px;
-    background:white;
-    border-radius:10px;
-    box-shadow:0 8px 20px rgba(0,0,0,.15);
-    overflow:hidden;
-    z-index:2000;
-}
-
-.dropdown-content a{
-    display:block;
-    padding:12px 15px;
-    color:#374151;
-    text-decoration:none;
-}
-
-.dropdown-content a:hover{
-    background:#f3f4f6;
-}
-
-.dropdown:hover .dropdown-content{
-    display:block;
+#themeToggle{
+    border:none;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
 }
 
 /* ===== LAYOUT ===== */
@@ -104,12 +78,13 @@ body{
     box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
+/* TITLE */
 h1{
     text-align:center;
     margin-bottom:30px;
 }
 
-/* DROPZONE */
+/* ===== DROPZONE ===== */
 .dropzone{
     min-height:180px;
     border:2px dashed #2563eb;
@@ -128,14 +103,41 @@ h1{
     background:#bfdbfe;
 }
 
+/* FORMAT TEXT */
 .formats{
     margin-top:10px;
     font-size:13px;
     color:#6b7280;
 }
 
-/* FILE */
-input[type="file"]{ display:none; }
+/* OPTIONS */
+.options{
+    margin-top:15px;
+    margin-bottom:10px;
+}
+
+.options label{
+    font-weight:bold;
+    display:block;
+    margin-bottom:6px;
+}
+
+.options select{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+/* FILE INPUT */
+input[type="file"]{
+    display:none;
+}
+
+/* FILE LIST */
+#fileList{
+    margin-top:15px;
+}
 
 .file-item{
     display:flex;
@@ -168,7 +170,13 @@ input[type="file"]{ display:none; }
     color:white;
 }
 
-/* ===== DARK MODE ===== */
+.footer-links a{
+    color:#ccc;
+    margin:0 10px;
+    text-decoration:none;
+}
+
+/* DARK MODE */
 .dark-mode{
     background:#111827;
     color:white;
@@ -199,66 +207,22 @@ input[type="file"]{ display:none; }
     color:#cbd5e1;
 }
 
-/* dropdown dark mode */
-.dark-mode .dropdown-content{
-    background:#1f2937;
-}
-
-.dark-mode .dropdown-content a{
-    color:white;
-}
-
-.dark-mode .dropdown-content a:hover{
-    background:#374151;
-}
-
 </style>
 </head>
 
 <body>
 
 <header class="site-header">
+    <div class="logo">⚡ Fast Magic PDF</div>
 
-<div class="logo">⚡ Fast Magic PDF</div>
+    <nav>
+        <a href="#" onclick="location.reload(); return false;">Home</a>
+        <a href="#">Tools</a>
+        <a href="#">Features</a>
+        <a href="#">Contact</a>
+    </nav>
 
-<nav>
-
-<a href="#" onclick="location.reload(); return false;">Home</a>
-
-<div class="dropdown">
-    <a href="#">Tools ▾</a>
-    <div class="dropdown-content">
-        <a href="#">Image to PDF</a>
-        <a href="#">PDF Compressor</a>
-        <a href="#">PDF Merger</a>
-        <a href="#">PDF Splitter</a>
-        <a href="#">PDF to Image</a>
-    </div>
-</div>
-
-<div class="dropdown">
-    <a href="#">Features ▾</a>
-    <div class="dropdown-content">
-        <a href="#">Drag & Drop Upload</a>
-        <a href="#">Dark Mode</a>
-        <a href="#">Page Numbers</a>
-        <a href="#">Fast Conversion</a>
-    </div>
-</div>
-
-<div class="dropdown">
-    <a href="#">Contact ▾</a>
-    <div class="dropdown-content">
-        <a href="mailto:support@fastmagicpdf.com">Email Support</a>
-        <a href="#">Help Center</a>
-        <a href="#">Feedback</a>
-    </div>
-</div>
-
-</nav>
-
-<button id="themeToggle">🌙 Dark Mode</button>
-
+    <button id="themeToggle">🌙 Dark Mode</button>
 </header>
 
 <div class="page-wrapper">
@@ -267,13 +231,28 @@ input[type="file"]{ display:none; }
 
 <h1>Image → PDF Converter</h1>
 
+<!-- DROPZONE -->
 <div class="dropzone" id="dropzone">
     <h3>Upload Images</h3>
     <p>Click or drag & drop images here</p>
-    <div class="formats">JPG, PNG, WEBP, GIF, BMP, AVIF</div>
+
+    <div class="formats">
+        Supported: JPG, JPEG, PNG, WEBP, GIF, BMP, AVIF
+    </div>
 </div>
 
-<input type="file" id="images" multiple>
+<!-- FILE INPUT -->
+<input type="file" id="images" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.avif">
+
+<!-- PAGE SIZE -->
+<div class="options">
+    <label>PDF Page Size</label>
+    <select id="pageSize">
+        <option value="A4">A4 (Standard)</option>
+        <option value="LETTER">Letter (US)</option>
+        <option value="A3">A3 (Large)</option>
+    </select>
+</div>
 
 <div id="fileList"></div>
 
@@ -281,15 +260,29 @@ input[type="file"]{ display:none; }
 Convert & Download PDF
 </button>
 
+<div id="status"></div>
+
 </div>
+
 </div>
+
+<footer class="site-footer">
+    <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+        <a href="#">Contact</a>
+    </div>
+
+    <p>© 2026 Fast Magic PDF</p>
+</footer>
 
 <script>
 
-/* FILE LOGIC */
 const input=document.getElementById("images");
 const dropzone=document.getElementById("dropzone");
 const fileList=document.getElementById("fileList");
+const pageSize=document.getElementById("pageSize");
 
 let selectedFiles=[];
 
@@ -298,45 +291,182 @@ const themeToggle=document.getElementById("themeToggle");
 
 if(localStorage.getItem("theme")==="dark"){
     document.body.classList.add("dark-mode");
-    themeToggle.innerText="☀️ Light Mode";
+    themeToggle.innerHTML="☀️ Light Mode";
 }
 
-themeToggle.onclick=()=>{
+themeToggle.addEventListener("click",()=>{
+
     document.body.classList.toggle("dark-mode");
 
     if(document.body.classList.contains("dark-mode")){
         localStorage.setItem("theme","dark");
-        themeToggle.innerText="☀️ Light Mode";
+        themeToggle.innerHTML="☀️ Light Mode";
     }else{
         localStorage.setItem("theme","light");
-        themeToggle.innerText="🌙 Dark Mode";
+        themeToggle.innerHTML="🌙 Dark Mode";
     }
-};
+});
 
-/* DROP */
+/* CLICK UPLOAD */
 dropzone.onclick=()=>input.click();
 
-input.onchange=()=>{
-    selectedFiles=[...input.files];
-};
+/* FILE SELECT */
+input.addEventListener("change",()=>{
+    selectedFiles=[...selectedFiles,...input.files];
+    renderFiles();
+});
 
-/* DRAG DROP */
-dropzone.ondragover=e=>{
+/* DRAG & DROP FIX */
+dropzone.addEventListener("dragover",(e)=>{
     e.preventDefault();
     dropzone.classList.add("dragover");
-};
+});
 
-dropzone.ondragleave=()=>{
+dropzone.addEventListener("dragleave",()=>{
     dropzone.classList.remove("dragover");
-};
+});
 
-dropzone.ondrop=e=>{
+dropzone.addEventListener("drop",(e)=>{
     e.preventDefault();
     dropzone.classList.remove("dragover");
 
     const files=[...e.dataTransfer.files];
-    selectedFiles=files.filter(f=>f.type.startsWith("image/"));
-};
+    const images=files.filter(f=>f.type.startsWith("image/"));
+
+    selectedFiles=[...selectedFiles,...images];
+    renderFiles();
+});
+
+/* RENDER FILES */
+function renderFiles(){
+
+    fileList.innerHTML="";
+
+    selectedFiles.forEach((file,i)=>{
+
+        const div=document.createElement("div");
+        div.className="file-item";
+
+        div.innerHTML=`
+        <span>${file.name}</span>
+        <button onclick="removeFile(${i})">X</button>
+        `;
+
+        fileList.appendChild(div);
+    });
+}
+
+function removeFile(i){
+    selectedFiles.splice(i,1);
+    renderFiles();
+}
+
+/* PDF CREATE */
+document.getElementById("convertBtn")
+.addEventListener("click",createPDF);
+
+async function createPDF(){
+
+    if(selectedFiles.length===0){
+        alert("Select images first");
+        return;
+    }
+
+    const pdfDoc=await PDFLib.PDFDocument.create();
+
+    let pageWidth=595;
+    let pageHeight=842;
+
+    const size=pageSize.value;
+
+    if(size==="LETTER"){
+        pageWidth=612;
+        pageHeight=792;
+    }
+
+    if(size==="A3"){
+        pageWidth=842;
+        pageHeight=1191;
+    }
+
+    for(const file of selectedFiles){
+
+        const blob=await resizeImage(file);
+        const bytes=await blob.arrayBuffer();
+
+        const image=await pdfDoc.embedJpg(bytes);
+
+        const page=pdfDoc.addPage([pageWidth,pageHeight]);
+
+        const scale=Math.min(
+            pageWidth/image.width,
+            pageHeight/image.height
+        );
+
+        page.drawImage(image,{
+            x:(pageWidth-image.width*scale)/2,
+            y:(pageHeight-image.height*scale)/2,
+            width:image.width*scale,
+            height:image.height*scale
+        });
+    }
+
+    /* PAGE NUMBERS */
+    const pages=pdfDoc.getPages();
+
+    pages.forEach((p,i)=>{
+        p.drawText(`Page ${i+1} of ${pages.length}`,{
+            x:p.getWidth()/2-40,
+            y:20,
+            size:10
+        });
+    });
+
+    const pdfBytes=await pdfDoc.save();
+
+    const blob=new Blob([pdfBytes],{type:"application/pdf"});
+
+    const url=URL.createObjectURL(blob);
+
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="images.pdf";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+/* RESIZE */
+async function resizeImage(file){
+
+    return new Promise(resolve=>{
+
+        const img=new Image();
+
+        img.onload=()=>{
+
+            const canvas=document.createElement("canvas");
+
+            let w=img.width;
+            let h=img.height;
+
+            if(w>1800){
+                h*=1800/w;
+                w=1800;
+            }
+
+            canvas.width=w;
+            canvas.height=h;
+
+            const ctx=canvas.getContext("2d");
+            ctx.drawImage(img,0,0,w,h);
+
+            canvas.toBlob(blob=>resolve(blob),"image/jpeg",0.9);
+        };
+
+        img.src=URL.createObjectURL(file);
+    });
+}
 
 </script>
 
