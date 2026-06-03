@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ImagePDF Pro</title>
+<title>Fast-Magic-Pdf-Image-Converter-Online</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
@@ -213,14 +213,45 @@ input[type="file"]{
 <body>
 
 <header class="site-header">
-    <div class="logo">📄 ImagePDF Pro</div>
+    <div class="logo">⚡ Fast Magic PDF</div>
 
     <nav>
-        <a href="#">Home</a>
-        <a href="#">Tools</a>
-        <a href="#">Features</a>
-        <a href="#">Contact</a>
-    </nav>
+
+    <a href="#" onclick="location.reload(); return false;">Home</a>
+
+    <div class="dropdown">
+        <a href="#">Tools ▾</a>
+        <div class="dropdown-content">
+            <a href="#">Image to PDF</a>
+            <a href="#">PDF Compressor</a>
+            <a href="#">PDF Merger</a>
+            <a href="#">PDF Splitter</a>
+            <a href="#">PDF to Image</a>
+        </div>
+    </div>
+
+    <div class="dropdown">
+        <a href="#">Features ▾</a>
+        <div class="dropdown-content">
+            <a href="#">Drag & Drop Upload</a>
+            <a href="#">Dark Mode</a>
+            <a href="#">Multiple Formats</a>
+            <a href="#">Page Numbers</a>
+            <a href="#">Fast Conversion</a>
+        </div>
+    </div>
+
+    <div class="dropdown">
+        <a href="#">Contact ▾</a>
+        <div class="dropdown-content">
+            <a href="mailto:support@fastmagicpdf.com">Email Support</a>
+            <a href="#">Help Center</a>
+            <a href="#">Report Issue</a>
+            <a href="#">Feedback</a>
+        </div>
+    </div>
+
+</nav>
 
     <button id="themeToggle">🌙 Dark Mode</button>
 </header>
@@ -274,7 +305,7 @@ Convert & Download PDF
         <a href="#">Contact</a>
     </div>
 
-    <p>© 2026 ImagePDF Pro</p>
+    <p>© 2026 Fast Magic PDF</p>
 </footer>
 
 <script>
@@ -285,6 +316,41 @@ const fileList=document.getElementById("fileList");
 const pageSize=document.getElementById("pageSize");
 
 let selectedFiles=[];
+/* ===== DROPDOWN MENU ===== */
+
+.dropdown{
+    position:relative;
+    display:inline-block;
+}
+
+.dropdown-content{
+    display:none;
+    position:absolute;
+    top:100%;
+    left:0;
+    min-width:220px;
+    background:white;
+    border-radius:10px;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+    overflow:hidden;
+    z-index:2000;
+}
+
+.dropdown-content a{
+    display:block;
+    padding:12px 15px;
+    color:#374151;
+    text-decoration:none;
+    transition:.2s;
+}
+
+.dropdown-content a:hover{
+    background:#f3f4f6;
+}
+
+.dropdown:hover .dropdown-content{
+    display:block;
+}
 
 /* DARK MODE */
 const themeToggle=document.getElementById("themeToggle");
