@@ -153,15 +153,30 @@ input[type="file"]{
 .site-footer{
     margin-top:40px;
     padding:25px;
-    text-align:center;
     background:#111827;
     color:white;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.footer-links{
+    display:flex;
+    gap:25px;
+    flex-wrap:wrap;
 }
 
 .footer-links a{
     color:#ccc;
-    margin:0 10px;
     text-decoration:none;
+    font-size:14px;
+}
+
+.footer-links a:hover{
+    color:white;
 }
 
 /* DARK MODE */
