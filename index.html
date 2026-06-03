@@ -60,7 +60,7 @@ body{
     color:white;
 }
 
-/* ===== CENTER LAYOUT FIX ===== */
+/* ===== LAYOUT ===== */
 .page-wrapper{
     min-height:calc(100vh - 140px);
     display:flex;
@@ -69,7 +69,6 @@ body{
     padding:40px 20px;
 }
 
-/* ===== MAIN CONTAINER ===== */
 .container{
     width:100%;
     max-width:900px;
@@ -79,7 +78,6 @@ body{
     box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
-/* TITLE */
 h1{
     text-align:center;
     margin-bottom:30px;
@@ -100,20 +98,9 @@ h1{
     padding:20px;
 }
 
-.dropzone h3{
-    margin-bottom:5px;
-}
-
-.dropzone p{
-    font-size:14px;
-    color:#555;
-}
-
-/* ⭐ NEW: Supported formats text */
-.formats{
-    margin-top:10px;
-    font-size:13px;
-    color:#6b7280;
+.dropzone.dragover{
+    background:#bfdbfe;
+    transform:scale(1.01);
 }
 
 /* FILE INPUT HIDDEN */
@@ -163,7 +150,7 @@ input[type="file"]{
     text-decoration:none;
 }
 
-/* ===== DARK MODE ===== */
+/* DARK MODE */
 .dark-mode{
     background:#111827;
     color:white;
@@ -188,11 +175,6 @@ input[type="file"]{
 
 .dark-mode .dropzone{
     background:#1e3a8a;
-}
-
-/* ⭐ dark mode support for formats text */
-.dark-mode .formats{
-    color:#cbd5e1;
 }
 
 </style>
@@ -223,9 +205,8 @@ input[type="file"]{
     <h3>Upload Images</h3>
     <p>Click or drag & drop images here</p>
 
-    <!-- ⭐ ADDED: Supported formats -->
     <div class="formats">
-        Supported formats: JPG, JPEG, PNG, WEBP, GIF, BMP, AVIF
+        Supported: JPG, PNG, WEBP, GIF, BMP, AVIF
     </div>
 </div>
 
@@ -283,16 +264,39 @@ themeToggle.addEventListener("click",()=>{
     }
 });
 
-/* CLICK */
+/* CLICK UPLOAD */
 dropzone.onclick=()=>input.click();
 
-/* FILE INPUT */
+/* FILE SELECT */
 input.addEventListener("change",()=>{
     selectedFiles=[...selectedFiles,...input.files];
     renderFiles();
 });
 
-/* RENDER */
+/* 🔥 FIXED DRAG & DROP (IMPORTANT) */
+dropzone.addEventListener("dragover",(e)=>{
+    e.preventDefault();
+    dropzone.classList.add("dragover");
+});
+
+dropzone.addEventListener("dragleave",()=>{
+    dropzone.classList.remove("dragover");
+});
+
+dropzone.addEventListener("drop",(e)=>{
+    e.preventDefault();
+    dropzone.classList.remove("dragover");
+
+    const files=[...e.dataTransfer.files];
+
+    const images=files.filter(f=>f.type.startsWith("image/"));
+
+    selectedFiles=[...selectedFiles,...images];
+
+    renderFiles();
+});
+
+/* RENDER FILES */
 function renderFiles(){
 
     fileList.innerHTML="";
@@ -316,7 +320,7 @@ function removeFile(i){
     renderFiles();
 }
 
-/* PDF CREATE */
+/* PDF GENERATION */
 document.getElementById("convertBtn")
 .addEventListener("click",createPDF);
 
@@ -351,7 +355,7 @@ async function createPDF(){
         });
     }
 
-    /* PAGE NUMBERS */
+    /* PAGE NUMBERS FIXED */
     const pages=pdfDoc.getPages();
 
     pages.forEach((p,i)=>{
@@ -378,7 +382,7 @@ async function createPDF(){
     URL.revokeObjectURL(url);
 }
 
-/* RESIZE */
+/* RESIZE IMAGE */
 async function resizeImage(file){
 
     return new Promise(resolve=>{
